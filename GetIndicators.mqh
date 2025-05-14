@@ -37,7 +37,8 @@ double GetSMAValue(int index = 0, int maDuration = 20, ENUM_TIMEFRAMES period = 
     }
 
     // Copy MA values
-    if (CopyBuffer(maHandle, 0, 0, 1, maArray) <= 0) {
+    int count = MathMax(3, index + 3);
+    if (CopyBuffer(maHandle, 0, 0, count, maArray) <= 0) {
         Print("Error copying MA values: ", GetLastError());
         return false;
     }
