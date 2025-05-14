@@ -25,7 +25,7 @@ bool CheckIsAboveSMA(double price, int maDuration = 20, ENUM_TIMEFRAMES period =
     return (price > maArray[0]);
 }
 
-bool GetSMAValue(int index = 0, int maDuration = 20, ENUM_TIMEFRAMES period = PERIOD_CURRENT, string symbol = NULL, bool verbose = false) {
+double GetSMAValue(int index = 0, int maDuration = 20, ENUM_TIMEFRAMES period = PERIOD_CURRENT, string symbol = NULL, bool verbose = false) {
     if(symbol == NULL) symbol = _Symbol;
     double maArray[];
     // int ma20Handle = iMA(_Symbol, PERIOD_CURRENT, 20, 0, MODE_SMA, PRICE_CLOSE);
