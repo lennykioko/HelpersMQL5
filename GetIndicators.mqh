@@ -10,7 +10,7 @@ bool CheckIsAboveSMA(double price, int maDuration = 20, ENUM_TIMEFRAMES period =
     }
 
     // Copy MA values
-    if (CopyBuffer(maHandle, 0, 0, 1, maArray) <= 0) {
+    if (CopyBuffer(maHandle, 0, 0, 3, maArray) <= 0) {
         Print("Error copying MA values: ", GetLastError());
         return false;
     }
