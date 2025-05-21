@@ -121,7 +121,9 @@ void DrawRangeOnChart(TimeRange &range, string name, color lineColor=clrBlue, co
 }
 
 // Draw extended horizontal levels for high, low, and middle
-void DrawRangeLevels(TimeRange &range, string name, bool isRecentRange=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT, color highColor=clrGreen, color lowColor=clrRed, color midColor=clrGoldenrod) {
+void DrawRangeLevels(TimeRange &range, string name, bool isRecentRange=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT,
+                     bool drawHigh=true, bool drawLow=true, bool drawMiddle=true,
+                     color highColor=clrGreen, color lowColor=clrRed, color midColor=clrGoldenrod) {
     if(!range.valid) return;
 
     string highLevelName = name + "HighLevel";
@@ -140,28 +142,34 @@ void DrawRangeLevels(TimeRange &range, string name, bool isRecentRange=false, EN
     datetime futureTime = currentTime + (86400 * 5); // Extend 5 days into future
 
     // Create horizontal line for the high
-    ObjectCreate(0, highLevelName, OBJ_TREND, 0, range.startTime, range.high, futureTime, range.high);
-    ObjectSetInteger(0, highLevelName, OBJPROP_COLOR, highColor);
-    ObjectSetInteger(0, highLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
-    ObjectSetInteger(0, highLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_SOLID : STYLE_DOT);
-    ObjectSetInteger(0, highLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
-    ObjectSetString(0, highLevelName, OBJPROP_TOOLTIP, "Range High: " + DoubleToString(range.high, _Digits));
+    if(drawHigh) {
+        ObjectCreate(0, highLevelName, OBJ_TREND, 0, range.startTime, range.high, futureTime, range.high);
+        ObjectSetInteger(0, highLevelName, OBJPROP_COLOR, highColor);
+        ObjectSetInteger(0, highLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
+        ObjectSetInteger(0, highLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_SOLID : STYLE_DOT);
+        ObjectSetInteger(0, highLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
+        ObjectSetString(0, highLevelName, OBJPROP_TOOLTIP, "Range High: " + DoubleToString(range.high, _Digits));
+    }
 
     // Create horizontal line for the low
-    ObjectCreate(0, lowLevelName, OBJ_TREND, 0, range.startTime, range.low, futureTime, range.low);
-    ObjectSetInteger(0, lowLevelName, OBJPROP_COLOR, lowColor);
-    ObjectSetInteger(0, lowLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
-    ObjectSetInteger(0, lowLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_SOLID : STYLE_DOT);
-    ObjectSetInteger(0, lowLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
-    ObjectSetString(0, lowLevelName, OBJPROP_TOOLTIP, "Range Low: " + DoubleToString(range.low, _Digits));
+    if(drawLow) {
+        ObjectCreate(0, lowLevelName, OBJ_TREND, 0, range.startTime, range.low, futureTime, range.low);
+        ObjectSetInteger(0, lowLevelName, OBJPROP_COLOR, lowColor);
+        ObjectSetInteger(0, lowLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
+        ObjectSetInteger(0, lowLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_SOLID : STYLE_DOT);
+        ObjectSetInteger(0, lowLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
+        ObjectSetString(0, lowLevelName, OBJPROP_TOOLTIP, "Range Low: " + DoubleToString(range.low, _Digits));
+    }
 
     // Create horizontal line for the middle
-    ObjectCreate(0, midLevelName, OBJ_TREND, 0, range.startTime, range.middle, futureTime, range.middle);
-    ObjectSetInteger(0, midLevelName, OBJPROP_COLOR, midColor);
-    ObjectSetInteger(0, midLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
-    ObjectSetInteger(0, midLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_DASH : STYLE_DOT);
-    ObjectSetInteger(0, midLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
-    ObjectSetString(0, midLevelName, OBJPROP_TOOLTIP, "Range Middle: " + DoubleToString(range.middle, _Digits));
+    if(drawMiddle) {
+        ObjectCreate(0, midLevelName, OBJ_TREND, 0, range.startTime, range.middle, futureTime, range.middle);
+        ObjectSetInteger(0, midLevelName, OBJPROP_COLOR, midColor);
+        ObjectSetInteger(0, midLevelName, OBJPROP_WIDTH, isRecentRange ? 2 : 1);
+        ObjectSetInteger(0, midLevelName, OBJPROP_STYLE, isRecentRange ? STYLE_DASH : STYLE_DOT);
+        ObjectSetInteger(0, midLevelName, OBJPROP_RAY_RIGHT, true); // Extend to the right
+        ObjectSetString(0, midLevelName, OBJPROP_TOOLTIP, "Range Middle: " + DoubleToString(range.middle, _Digits));
+    }
 
     // Add range type and size label if it's the recent range
     if(isRecentRange) {
@@ -181,7 +189,9 @@ void DrawRangeLevels(TimeRange &range, string name, bool isRecentRange=false, EN
 }
 
 // Calculate range between two times for a specific day offset
-TimeRange CalculateRangeForDay(string startTimeStr, string endTimeStr, int dayOffset, string name="Range", bool drawOnChart=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT) {
+TimeRange CalculateRangeForDay(string startTimeStr, string endTimeStr, int dayOffset, string name="Range",
+                               bool drawOnChart=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT,
+                               bool drawHigh=true, bool drawLow=true, bool drawMiddle=true) {
     TimeRange range;
     range.high = 0;
     range.low = DBL_MAX;
@@ -313,7 +323,9 @@ TimeRange CalculateRangeForDay(string startTimeStr, string endTimeStr, int dayOf
 
             // Only draw horizontal levels for today's range (dayOffset = 0)
             if(dayOffset == 0) {
-                DrawRangeLevels(range, rangeName, true, timeframe, clrGreen, clrRed, clrGoldenrod);
+                DrawRangeLevels(range, rangeName, true, timeframe,
+                                drawHigh, drawLow, drawMiddle,
+                                clrGreen, clrRed, clrGoldenrod);
             }
         }
     } else {
@@ -324,14 +336,17 @@ TimeRange CalculateRangeForDay(string startTimeStr, string endTimeStr, int dayOf
 }
 
 // Get an array of ranges for multiple days
-bool GetRanges(string startTimeStr, string endTimeStr, TimeRange &rangeArray[], int daysBack=0, string name="Range", bool drawOnChart=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT) {
+bool GetRanges(string startTimeStr, string endTimeStr, TimeRange &rangeArray[], int daysBack=0,
+               string name="Range", bool drawOnChart=false, ENUM_TIMEFRAMES timeframe=PERIOD_CURRENT,
+               bool drawHigh=true, bool drawLow=true, bool drawMiddle=true) {
     // Resize the array to fit the requested number of days
     ArrayResize(rangeArray, daysBack + 1);
     bool hasValidRanges = false;
 
     // Calculate ranges for each day
     for(int i = 0; i <= daysBack; i++) {
-        rangeArray[i] = CalculateRangeForDay(startTimeStr, endTimeStr, i, name + IntegerToString(i), drawOnChart, timeframe);
+        rangeArray[i] = CalculateRangeForDay(startTimeStr, endTimeStr, i, name + IntegerToString(i),
+                                            drawOnChart, timeframe, drawHigh, drawLow, drawMiddle);
         if(rangeArray[i].valid) hasValidRanges = true;
     }
 
