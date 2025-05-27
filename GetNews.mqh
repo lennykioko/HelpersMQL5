@@ -7,7 +7,7 @@
 #property link      "https://www.mql5.com"
 #property strict
 
-bool isTradingAllowedByNews() {
+bool IsTradingAllowedByNews() {
     string code = "US";
     MqlCalendarValue values[];
     datetime currentTime = TimeCurrent();
