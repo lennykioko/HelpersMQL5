@@ -10,20 +10,20 @@
 //+------------------------------------------------------------------+
 //| Send Telegram Notification                                       |
 //+------------------------------------------------------------------+
-void SendTelegramAlert(string botToken, string chatId, string message, bool EnableTelegramAlerts = true) {
-   if(!EnableTelegramAlerts) {
+void SendTelegramAlert(string TelegramBotToken, string TelegramChatId, string TelegramMessage, bool TelegramEnableTelegramAlerts = true) {
+   if(!TelegramEnableTelegramAlertss) {
       Print("Telegram alerts are disabled.");
       return;
    }
 
-   if(botToken == "" || chatId == "") {
+   if(TelegramBotToken == "" || TelegramChatId == "") {
       Print("Chat ID or Bot Token is not set. Cannot send Telegram notification.");
       return;
    }
 
    string headers;
    char post[], result[];
-   string url = "https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + chatId + "&text=" + message + "&parse_mode=html";
+   string url = "https://api.telegram.org/bot" + TelegramBotToken + "/sendMessage?chat_id=" + TelegramChatId + "&text=" + TelegramMessage + "&parse_mode=html";
 
    ResetLastError();
    int send = WebRequest("POST", url, NULL, NULL, 5000, post, 0, result, headers);
