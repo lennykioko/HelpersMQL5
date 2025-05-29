@@ -11,7 +11,7 @@
 //| Send Telegram Notification                                       |
 //+------------------------------------------------------------------+
 void SendTelegramAlert(string TelegramBotToken, string TelegramChatId, string TelegramMessage, bool TelegramEnableTelegramAlerts = true) {
-   if(!TelegramEnableTelegramAlertss) {
+   if(!TelegramEnableTelegramAlerts) {
       Print("Telegram alerts are disabled.");
       return;
    }
