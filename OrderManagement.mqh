@@ -157,10 +157,16 @@ bool TakePartialProfit(double partialRRR = 1.0, double percent = 0.5, string sym
         if(ticket != 0 && PositionGetString(POSITION_SYMBOL) == symbol) {
             ENUM_POSITION_TYPE positionType = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
             double entryPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+            double slPrice = PositionGetDouble(POSITION_SL);
             double lotSize = PositionGetDouble(POSITION_VOLUME);
             double minLot = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MIN);
             double maxLot = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_MAX);
             double stepLot = SymbolInfoDouble(_Symbol, SYMBOL_VOLUME_STEP);
+
+             // Skip if SL already at or past BE
+            if((positionType == POSITION_TYPE_BUY && slPrice >= entryPrice) || (positionType == POSITION_TYPE_SELL && slPrice <= entryPrice)) {
+                continue;
+            }
 
             double partialLotSize = lotSize * percent;
             partialLotSize = NormalizeDouble(MathFloor(partialLotSize / stepLot) * stepLot, 2);
@@ -169,13 +175,13 @@ bool TakePartialProfit(double partialRRR = 1.0, double percent = 0.5, string sym
                 partialLotSize = minLot;
             }
 
+            double mvmtNeeded = MathAbs(entryPrice - slPrice) * partialRRR;
+
             if(positionType == POSITION_TYPE_BUY) {
                 double currentPrice = SymbolInfoDouble(symbol, SYMBOL_ASK);
-                double mvmtNeeded = MathAbs(entryPrice - currentPrice) * partialRRR;
                 shouldTakePartial = (currentPrice >= entryPrice + mvmtNeeded);
             } else if(positionType == POSITION_TYPE_SELL) {
                 double currentPrice = SymbolInfoDouble(symbol, SYMBOL_BID);
-                double mvmtNeeded = MathAbs(entryPrice - currentPrice) * partialRRR;
                 shouldTakePartial = (currentPrice <= entryPrice - mvmtNeeded);
             }
 
