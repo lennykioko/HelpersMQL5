@@ -190,7 +190,7 @@ bool TakePartialProfit(double partialRRR = 1.0, double percent = 0.5, string sym
                     Print("Failed to take partial profit. Error: ", GetLastError());
                 } else {
                     partialTaken = true;
-                    Print("Partial profit taken successfully.");
+                    Print("Partial profit taken successfully. Lot size: " + DoubleToString(partialLotSize) + " of total lot size: " + DoubleToString(NormalizeDouble(lotSize, 2)));
                 }
             }
         }
